@@ -5,5 +5,9 @@ In addition, this project is using packrat as the Package Manager for R librarie
 Please have in mind that in order to run this REST API, you will have to execute the following commands:
 
 > setwd("path_to_plumber_file")
+
+
 > pr <- plumber::plumb("plumber.R") # this is the plumber file
+
+
 > pr$run()
