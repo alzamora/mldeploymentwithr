@@ -1,14 +1,25 @@
-FROM r-base
-MAINTAINER Boris Alzamora "soyborisalzamora@gmail.com"
+# start from the rocker/r-ver:3.5.0 image
+FROM rocker/r-ver:3.5.0
 
+# install the linux libraries needed for plumber
+RUN apt-get update -qq && apt-get install -y \
+  libssl-dev \
+  libcurl4-gnutls-dev
 
+# install plumber
+RUN R -e "install.packages('plumber')"
+
+# copy everything from the current directory into the container
 COPY . /app
 WORKDIR /app
 
-CMD ["echo install.packages(\"packrat\", repos=\"https://cran.rstudio.com\") | R --no-save"]
-CMD ["echo packrat::init()| R --no-save"]
-CMD ["echo packrat::clean()| R --no-save"]
-CMD ["echo packrat::snapshot()| R --no-save"]
-CMD ["echo setwd(\"path_to_plumber_file\") | R --no-save"]
-CMD ["echo pr <- plumber::plumb(\"/app/plumber.R\")  | R --no-save"]
-CMD ["echo pr$run() | R --no-save"]
+# # set up packrat
+# RUN R -e "packrat::init()"
+# RUN R -e "packrat::clean()"
+# RUN R -e "packrat::snapshot()"
+
+# open port 80 to traffic
+EXPOSE 80
+
+# when the container starts, start the main.R script
+ENTRYPOINT ["Rscript", "main.R"]
